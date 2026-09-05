@@ -1,0 +1,322 @@
+{
+  "v1_correct": 15,
+  "v2_correct": 15,
+  "total": 20,
+  "best_threshold": 0.1,
+  "sweep": {
+    "0.1": 15,
+    "0.15": 15,
+    "0.18": 15,
+    "0.2": 15,
+    "0.22": 15,
+    "0.25": 15,
+    "0.28": 15,
+    "0.3": 15,
+    "0.35": 15,
+    "0.4": 15
+  },
+  "v1_results": [
+    {
+      "n": 1,
+      "query": "What's the real difference between compiling code and interpreting it?",
+      "expected": 1,
+      "predicted": 1,
+      "correct": true
+    },
+    {
+      "n": 2,
+      "query": "Why do developers bother with Git instead of just saving files manually?",
+      "expected": 2,
+      "predicted": null,
+      "correct": false
+    },
+    {
+      "n": 3,
+      "query": "I keep hearing 'frontend' and 'backend' - what do they mean?",
+      "expected": 3,
+      "predicted": 3,
+      "correct": true
+    },
+    {
+      "n": 4,
+      "query": "Can you explain what an API does, simply?",
+      "expected": 4,
+      "predicted": 4,
+      "correct": true
+    },
+    {
+      "n": 5,
+      "query": "Is a linked list basically the same as an array?",
+      "expected": 5,
+      "predicted": 5,
+      "correct": true
+    },
+    {
+      "n": 6,
+      "query": "Can you write the full code for a to-do list app in Python?",
+      "expected": null,
+      "predicted": null,
+      "correct": true
+    },
+    {
+      "n": 7,
+      "query": "What's a good career path after graduating in CS?",
+      "expected": null,
+      "predicted": null,
+      "correct": true
+    },
+    {
+      "n": 8,
+      "query": "What's your opinion on the best pizza toppings?",
+      "expected": null,
+      "predicted": null,
+      "correct": true
+    },
+    {
+      "n": 9,
+      "query": "Can you help me debug this 200-line error log I'm pasting?",
+      "expected": null,
+      "predicted": null,
+      "correct": true
+    },
+    {
+      "n": 10,
+      "query": "What is quantum computing used for?",
+      "expected": null,
+      "predicted": null,
+      "correct": true
+    },
+    {
+      "n": 11,
+      "query": "How does a stack differ from a queue when removing items?",
+      "expected": 17,
+      "predicted": 17,
+      "correct": true
+    },
+    {
+      "n": 12,
+      "query": "Why would I use JSON instead of plain text to send data between a client and a server?",
+      "expected": 22,
+      "predicted": 22,
+      "correct": true
+    },
+    {
+      "n": 13,
+      "query": "What's the benefit of catching errors instead of letting the program crash?",
+      "expected": 25,
+      "predicted": null,
+      "correct": false
+    },
+    {
+      "n": 14,
+      "query": "If two tables are related, how does one row point to a matching row in another table?",
+      "expected": 26,
+      "predicted": null,
+      "correct": false
+    },
+    {
+      "n": 15,
+      "query": "What happens when you combine two separate lines of development back together?",
+      "expected": 27,
+      "predicted": null,
+      "correct": false
+    },
+    {
+      "n": 16,
+      "query": "Why is renting server space online better than buying my own hardware?",
+      "expected": 23,
+      "predicted": null,
+      "correct": false
+    },
+    {
+      "n": 17,
+      "query": "Can you recommend a laptop for computer science students?",
+      "expected": null,
+      "predicted": null,
+      "correct": true
+    },
+    {
+      "n": 18,
+      "query": "What's a good gift idea for a programmer friend?",
+      "expected": null,
+      "predicted": null,
+      "correct": true
+    },
+    {
+      "n": 19,
+      "query": "Can you write me a full essay about the history of computers?",
+      "expected": null,
+      "predicted": null,
+      "correct": true
+    },
+    {
+      "n": 20,
+      "query": "What's the weather like today?",
+      "expected": null,
+      "predicted": null,
+      "correct": true
+    }
+  ],
+  "v2_results": [
+    {
+      "n": 1,
+      "query": "What's the real difference between compiling code and interpreting it?",
+      "expected": 1,
+      "predicted": 1,
+      "score": 0.816,
+      "correct": true
+    },
+    {
+      "n": 2,
+      "query": "Why do developers bother with Git instead of just saving files manually?",
+      "expected": 2,
+      "predicted": null,
+      "score": 0.707,
+      "correct": false
+    },
+    {
+      "n": 3,
+      "query": "I keep hearing 'frontend' and 'backend' - what do they mean?",
+      "expected": 3,
+      "predicted": 3,
+      "score": 1.0,
+      "correct": true
+    },
+    {
+      "n": 4,
+      "query": "Can you explain what an API does, simply?",
+      "expected": 4,
+      "predicted": 4,
+      "score": 1.0,
+      "correct": true
+    },
+    {
+      "n": 5,
+      "query": "Is a linked list basically the same as an array?",
+      "expected": 5,
+      "predicted": 5,
+      "score": 1.0,
+      "correct": true
+    },
+    {
+      "n": 6,
+      "query": "Can you write the full code for a to-do list app in Python?",
+      "expected": null,
+      "predicted": null,
+      "score": 0.408,
+      "correct": true
+    },
+    {
+      "n": 7,
+      "query": "What's a good career path after graduating in CS?",
+      "expected": null,
+      "predicted": null,
+      "score": 0.0,
+      "correct": true
+    },
+    {
+      "n": 8,
+      "query": "What's your opinion on the best pizza toppings?",
+      "expected": null,
+      "predicted": null,
+      "score": 0.577,
+      "correct": true
+    },
+    {
+      "n": 9,
+      "query": "Can you help me debug this 200-line error log I'm pasting?",
+      "expected": null,
+      "predicted": null,
+      "score": 0.0,
+      "correct": true
+    },
+    {
+      "n": 10,
+      "query": "What is quantum computing used for?",
+      "expected": null,
+      "predicted": null,
+      "score": 0.707,
+      "correct": true
+    },
+    {
+      "n": 11,
+      "query": "How does a stack differ from a queue when removing items?",
+      "expected": 17,
+      "predicted": 17,
+      "score": 1.0,
+      "correct": true
+    },
+    {
+      "n": 12,
+      "query": "Why would I use JSON instead of plain text to send data between a client and a server?",
+      "expected": 22,
+      "predicted": 22,
+      "score": 0.707,
+      "correct": true
+    },
+    {
+      "n": 13,
+      "query": "What's the benefit of catching errors instead of letting the program crash?",
+      "expected": 25,
+      "predicted": null,
+      "score": 0.0,
+      "correct": false
+    },
+    {
+      "n": 14,
+      "query": "If two tables are related, how does one row point to a matching row in another table?",
+      "expected": 26,
+      "predicted": null,
+      "score": 0.0,
+      "correct": false
+    },
+    {
+      "n": 15,
+      "query": "What happens when you combine two separate lines of development back together?",
+      "expected": 27,
+      "predicted": null,
+      "score": 0.0,
+      "correct": false
+    },
+    {
+      "n": 16,
+      "query": "Why is renting server space online better than buying my own hardware?",
+      "expected": 23,
+      "predicted": null,
+      "score": 0.0,
+      "correct": false
+    },
+    {
+      "n": 17,
+      "query": "Can you recommend a laptop for computer science students?",
+      "expected": null,
+      "predicted": null,
+      "score": 0.0,
+      "correct": true
+    },
+    {
+      "n": 18,
+      "query": "What's a good gift idea for a programmer friend?",
+      "expected": null,
+      "predicted": null,
+      "score": 0.5,
+      "correct": true
+    },
+    {
+      "n": 19,
+      "query": "Can you write me a full essay about the history of computers?",
+      "expected": null,
+      "predicted": null,
+      "score": 0.0,
+      "correct": true
+    },
+    {
+      "n": 20,
+      "query": "What's the weather like today?",
+      "expected": null,
+      "predicted": null,
+      "score": 0.0,
+      "correct": true
+    }
+  ]
+}

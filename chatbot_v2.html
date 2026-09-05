@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>FAQ Chatbot v2 - TF-IDF + Cosine Similarity</title>
+<style>
+  body { background:#0f172a; color:#e2e8f0; font-family: -apple-system, Segoe UI, Arial, sans-serif; max-width:720px; margin:30px auto; padding:0 16px; }
+  h1 { font-size:20px; }
+  .sub { color:#94a3b8; font-size:13px; margin-bottom:16px; }
+  #chat { background:#1e293b; border-radius:10px; padding:14px; height:420px; overflow-y:auto; margin-bottom:10px; }
+  .msg { padding:8px 12px; border-radius:10px; margin:6px 0; max-width:80%; line-height:1.4; font-size:14px; }
+  .bot { background:#334155; }
+  .user { background:#2563eb; margin-left:auto; text-align:right; }
+  .score { color:#94a3b8; font-size:11px; margin-top:2px; }
+  #row { display:flex; gap:8px; }
+  input { flex:1; padding:10px; border-radius:8px; border:1px solid #334155; background:#0f172a; color:#e2e8f0; }
+  button { padding:10px 14px; border-radius:8px; border:none; background:#2563eb; color:white; cursor:pointer; }
+  button.secondary { background:#475569; }
+</style>
+</head>
+<body>
+<h1>FAQ Chatbot for CS Fundamentals — v2</h1>
+<div class="sub">Offline mode — TF-IDF + Cosine Similarity, runs 100% in your browser. Anything outside CS fundamentals scope gets politely refused.</div>
+<div id="chat"></div>
+<div id="row">
+  <input id="input" placeholder="Ask a CS fundamentals question..." onkeydown="if(event.key==='Enter')send()">
+  <button class="secondary" onclick="runDemo()">Run demo (20 questions)</button>
+  <button onclick="send()">Send</button>
+</div>
+
+<script>
+const KB = [
+  {id:1, q:"Compiler vs. interpreter?", a:"A compiler translates the whole source code into machine code before execution, producing a standalone executable. An interpreter translates and executes code line by line at runtime."},
+  {id:2, q:"What is Git and why use it?", a:"Git is a distributed version control system that tracks code changes over time, enabling collaboration and rollback to earlier versions."},
+  {id:3, q:"Frontend vs. backend?", a:"Frontend builds what users interact with directly (UI, layout). Backend handles server-side logic, databases, and APIs."},
+  {id:4, q:"What is an API?", a:"An API is a set of rules letting software systems communicate, typically via requests and responses."},
+  {id:5, q:"Array vs. linked list?", a:"Arrays store elements in contiguous memory for fast index access. Linked lists store elements as pointer-connected nodes, faster to insert/remove but slower to access by index."},
+  {id:6, q:"What is Big O notation?", a:"It describes how an algorithm's runtime or memory use grows as input size increases, used to compare efficiency."},
+  {id:7, q:"SQL vs. NoSQL?", a:"SQL databases use structured tables with fixed schemas. NoSQL databases store flexible formats (documents, key-value, graphs), suited to unstructured data."},
+  {id:8, q:"What is OOP (object-oriented programming)?", a:"A paradigm organizing code into objects combining data and behavior, built on encapsulation, inheritance, and polymorphism."},
+  {id:9, q:"Best first language for beginners?", a:"Python is commonly recommended for its readable syntax and wide use in web dev, data science, and automation."},
+  {id:10, q:"HTTP vs. HTTPS?", a:"HTTPS is HTTP encrypted with TLS/SSL, protecting data in transit from interception."},
+  {id:11, q:"What is a database index?", a:"A structure that speeds up data retrieval on a table, at the cost of extra storage and slower writes."},
+  {id:12, q:"What is branching in version control?", a:"A separate line of development from the main codebase, used for features/fixes without affecting main until merged."},
+  {id:13, q:"Synchronous vs. asynchronous code?", a:"Synchronous code blocks until each operation finishes; asynchronous code lets other work run while waiting on a task."},
+  {id:14, q:"What is a REST API?", a:"An API following REST principles, using HTTP methods (GET, POST, PUT, DELETE) on URL-identified resources."},
+  {id:15, q:"Bug vs. feature request?", a:"A bug is unintended behavior where software doesn't work as designed; a feature request asks for new functionality."},
+  {id:16, q:"What is recursion?", a:"Recursion is when a function calls itself to solve a smaller version of the same problem, until it reaches a base case that stops it."},
+  {id:17, q:"Stack vs. queue?", a:"A stack is Last-In-First-Out (LIFO): the last item added is the first removed. A queue is First-In-First-Out (FIFO): the first item added is the first removed."},
+  {id:18, q:"TCP vs. UDP?", a:"TCP is connection-based and guarantees ordered, reliable delivery. UDP is connectionless and faster, but does not guarantee delivery or order."},
+  {id:19, q:"What is caching?", a:"Caching stores frequently used data in fast, temporary storage so future requests for it are served faster instead of recomputing or refetching it."},
+  {id:20, q:"What is encryption?", a:"Encryption converts readable data into an unreadable format using a key, so only someone with the correct key can decrypt and read it again."},
+  {id:21, q:"What is unit testing?", a:"Unit testing means testing small, individual pieces of code (like a single function) in isolation to confirm each one works as expected."},
+  {id:22, q:"What is JSON?", a:"JSON (JavaScript Object Notation) is a lightweight, text-based format for storing and exchanging data using key-value pairs, widely used by APIs."},
+  {id:23, q:"What is cloud computing?", a:"Cloud computing means renting computing resources (servers, storage, databases) over the internet instead of owning physical hardware."},
+  {id:24, q:"What is Agile/Scrum?", a:"Agile is a software development approach based on short, iterative cycles. Scrum is a specific Agile framework using fixed-length sprints, daily stand-ups, and a backlog."},
+  {id:25, q:"What is exception handling?", a:"Exception handling is code that catches and responds to runtime errors (using try/except or try/catch) so the program can fail gracefully instead of crashing."},
+  {id:26, q:"Primary key vs. foreign key?", a:"A primary key uniquely identifies each row in a table. A foreign key is a column in one table that references a primary key in another table, linking the two."},
+  {id:27, q:"What is version control merging?", a:"Merging combines changes from one branch into another, integrating the work of separate branches back into a single line of code."}
+];
+
+const STOPWORDS = new Set("a an the of and or to in on for do does you your i me can what is it just also this that with how why".split(" "));
+const SUFFIXES = ["ing","edly","ed","ers","er","es","s"];
+const EXCEPTIONS = {computer:"computer", computers:"computer", computing:"computing"};
+
+function stem(w){
+  if (EXCEPTIONS[w]) return EXCEPTIONS[w];
+  for (const suf of SUFFIXES){
+    if (w.endsWith(suf) && w.length - suf.length >= 3) return w.slice(0, -suf.length);
+  }
+  return w;
+}
+function tokenize(text){
+  const words = text.toLowerCase().match(/[a-z]+/g) || [];
+  return words.filter(w => !STOPWORDS.has(w) && w.length > 2).map(stem);
+}
+
+// Build TF-IDF vectors for the KB (tiny, dependency-free implementation)
+const vocab = {};
+const kbTokens = KB.map(e => tokenize(e.q));
+kbTokens.forEach(toks => new Set(toks).forEach(t => { vocab[t] = (vocab[t]||0) + 1; }));
+const N = KB.length;
+function idf(t){ return Math.log((1+N) / (1+(vocab[t]||0))) + 1; }
+function tfidfVec(tokens){
+  const counts = {};
+  tokens.forEach(t => counts[t] = (counts[t]||0) + 1);
+  const vec = {};
+  for (const t in counts) vec[t] = counts[t] * idf(t);
+  return vec;
+}
+function cosine(v1, v2){
+  let dot=0, n1=0, n2=0;
+  for (const k in v1){ n1 += v1[k]*v1[k]; if (v2[k]) dot += v1[k]*v2[k]; }
+  for (const k in v2){ n2 += v2[k]*v2[k]; }
+  if (n1===0 || n2===0) return 0;
+  return dot / (Math.sqrt(n1)*Math.sqrt(n2));
+}
+const kbVecs = kbTokens.map(tfidfVec);
+const THRESHOLD = 0.10;
+const REFUSAL = "That's outside what I can help with here - I can only answer core CS/programming fundamentals questions.";
+
+function answer(query){
+  const qTokens = tokenize(query);
+  const qVec = tfidfVec(qTokens);
+  let bestIdx = -1, bestScore = -1;
+  kbVecs.forEach((v, i) => { const s = cosine(qVec, v); if (s > bestScore){ bestScore = s; bestIdx = i; } });
+  if (bestIdx === -1) return {text: REFUSAL, score: 0};
+  const kbSet = new Set(kbTokens[bestIdx]);
+  const shared = qTokens.filter(t => kbSet.has(t));
+  const required = kbSet.size > 1 ? 2 : kbSet.size;
+  if (bestScore < THRESHOLD || new Set(shared).size < required) return {text: REFUSAL, score: Math.round(bestScore*1000)/1000};
+  return {text: KB[bestIdx].a, score: Math.round(bestScore*1000)/1000};
+}
+
+const chat = document.getElementById('chat');
+function addMsg(text, who, score){
+  const d = document.createElement('div');
+  d.className = 'msg ' + who;
+  d.textContent = text;
+  chat.appendChild(d);
+  if (who==='bot' && score !== undefined){
+    const s = document.createElement('div');
+    s.className = 'score';
+    s.textContent = 'confidence: ' + score;
+    chat.appendChild(s);
+  }
+  chat.scrollTop = chat.scrollHeight;
+}
+function send(){
+  const input = document.getElementById('input');
+  const text = input.value.trim();
+  if (!text) return;
+  addMsg(text, 'user');
+  const r = answer(text);
+  addMsg(r.text, 'bot', r.score);
+  input.value = '';
+}
+function runDemo(){
+  const tests = [
+    "What's the real difference between compiling code and interpreting it?",
+    "Why do developers bother with Git instead of just saving files manually?",
+    "I keep hearing 'frontend' and 'backend' - what do they mean?",
+    "Can you explain what an API does, simply?",
+    "Is a linked list basically the same as an array?",
+    "Can you write the full code for a to-do list app in Python?",
+    "What's a good career path after graduating in CS?",
+    "What's your opinion on the best pizza toppings?",
+    "How does a stack differ from a queue when removing items?",
+    "What is quantum computing used for?"
+  ];
+  tests.forEach(t => { addMsg(t, 'user'); const r = answer(t); addMsg(r.text, 'bot', r.score); });
+}
+addMsg("Hi! Ask me a beginner CS question, or click 'Run demo' to see sample questions.", 'bot');
+</script>
+</body>
+</html>
